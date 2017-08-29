@@ -1,0 +1,13 @@
+build/
+dcos.egg-info/
+dist/
+env/
+tmp/
+pydoc/_build/
+
+.ropeproject/
+.tox/
+.coverage
+
+*.pyc
+*.bak
