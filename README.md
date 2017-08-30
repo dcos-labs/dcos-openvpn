@@ -3,7 +3,7 @@ DC/OS OpenVPN
 
 OpenVPN server and REST management interface package for DC/OS
 
-Please note: This is a DC/OS Community package, which is not supported by Mesosphere Customer support.
+Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not supported by Mesosphere Customer support.
 
 All issues and PRs should be raised on this repository.
 
@@ -52,16 +52,16 @@ Managing Users
 --------------
 
 ### Add User
-1. Authenticate and post to the REST endpoint, the new user's credentials will be output to the POST BODY. Add these to a suitable OpenVPN client.
+1. Authenticate and POST to the REST endpoint (found under the UI > services > openvpn > task > details). The new user's credentials will be output to the POST body. Add these to a suitable OpenVPN client and note to amend the target IP to that of the OpenVPN endpoint.
 1. The new assets will be copied to Zookeeper for persistence in case the task is killed, and will be copied back to the container on startup.
 ```
-curl -k -u admin:password -X POST -d "name=richard" https://192.168.33.12:31074/client
+curl -k -u admin:password -X POST -d "name=richard" https://<REST endpoint ip:port>/client
 ```
 
 ### Revoke User
 1. Calls easyrsa revokeclient to correctly revoke the client, removes all assets locally and from Zookeeper
 ```
-curl -k -u admin:password -X DELETE https://192.168.33.12:19129/client/richard
+curl -k -u admin:password -X DELETE https://<REST endpoint ip:port>/client/richard
 ```
 
 How it works
