@@ -28,7 +28,7 @@ The simplest method of installation is simply to add it as a new Marathon task:
 
 1. You must add the secrets to DC/OS; ovpn_username & ovpn_password. Without these, the task will not launch
 1. Clone this repo to your machine
-1. Using the DC/OS cli add the task `dcos marathon app add config.json`
+1. Using the DC/OS cli add the task `dcos marathon app add marathon.json`
 1. From the DC/OS UI > Services > openvpn
 1. Check it's running, if failed, goto the most recent failed task > Logs > Stderr
 1. From Services > openvpn > latest running task > Details
