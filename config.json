@@ -1,0 +1,64 @@
+{
+  "id": "openvpn",
+  "instances": 1,
+  "portDefinitions": [],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "portMappings": [
+        {
+          "containerPort": 5000,
+          "protocol": "tcp",
+          "name": "openvpn-admin"
+        },
+        {
+          "containerPort": 1194,
+          "hostport": 1194,
+          "protocol": "udp",
+          "name": "openvpnudp"
+        },
+        {
+          "containerPort": 1194,
+          "hostport": 1194,
+          "protocol": "tcp",
+          "name": "openvpntcp"
+        }
+      ],
+      "network": "BRIDGE",
+      "image": "aggress/richard-openvpn:refactor",
+      "forcePullImage": true,
+      "privileged": true
+    }
+  },
+   "healthChecks": [
+    {
+      "gracePeriodSeconds": 120,
+      "intervalSeconds": 30,
+      "timeoutSeconds": 5,
+      "maxConsecutiveFailures": 0,
+      "path": "/status",
+      "portIndex": 0,
+      "protocol": "MESOS_HTTPS",
+      "ignoreHttp1xx": false
+    }
+  ],
+  "cpus": 0.1,
+  "mem": 128,
+  "secrets": {
+    "secret0": {
+      "source": "ovpn_username"
+    },
+    "secret1": {
+      "source": "ovpn_password"
+    }
+  },
+  "requirePorts": false,
+  "env": {
+    "OVPN_USERNAME": {
+      "secret": "secret0"
+    },
+    "OVPN_PASSWORD": {
+      "secret": "secret1"
+    }
+  }
+}

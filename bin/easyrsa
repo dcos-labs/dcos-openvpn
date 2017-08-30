@@ -698,11 +698,11 @@ Unable to revoke as the input file is not a valid certificate. Unexpected
 input in file: $crt_in"
 
 	# confirm operation by displaying DN:
-	confirm "Continue with revocation: " "yes" "
-Please confirm you wish to revoke the certificate with the following subject:
+	#confirm "Continue with revocation: " "yes" "
+#Please confirm you wish to revoke the certificate with the following subject:
 
 $(display_dn x509 "$crt_in")
-"	# => confirm end
+#"	# => confirm end
 
 	# referenced cert must exist:
 	[ -f "$crt_in" ] || die "\

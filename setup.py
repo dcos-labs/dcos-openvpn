@@ -66,7 +66,10 @@ setup(
         'flask >= 0.10.1',
         'webargs == 0.15.0',
         # 'mesos.native >= 0.22.0',
-        'zk-shell'
+        'zk-shell',
+        'Flask-BasicAuth',
+        'pyopenssl',
+        'kazoo == 2.2.1'
     ],
 
     # List additional groups of dependencies here (e.g. development

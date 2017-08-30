@@ -1,12 +1,9 @@
 
 from __future__ import absolute_import, print_function
 
-import argparse
 import logging
 import os
 import sys
-import time
-import threading
 
 from . import web
 
@@ -19,6 +16,7 @@ REQUIRED_ENV = [
     "HOST",
     "EASYRSA_PKI"
 ]
+
 
 def setup_logging():
     root = logging.getLogger()
@@ -50,8 +48,9 @@ def main():
     setup_logging()
 
     check_env()
+    context = ('/etc/openvpn/pki/issued/openvpn.dcos.crt', '/etc/openvpn/pki/private/openvpn.dcos.key')
+    web.app.run(host='0.0.0.0', ssl_context=context, threaded=True)
 
-    web.app.run(host='0.0.0.0')
 
 if __name__ == "__main__":
     main()
