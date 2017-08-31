@@ -14,55 +14,76 @@ Features
 1. Automatically configures PKI, certificates and runs OpenVPN without user interaction
 1. Provides a REST interface for adding, revoking users and accessing their credentials for use with a suitable client
 1. Exposes endpoints for OpenVPN - 1194/TCP & UDP, 5000/TCP REST
-1. The REST interface uses Flask-BasicAuth and DC/OS secrets for basic (username & password) authentication
+1. The REST interface uses Flask-BasicAuth and defined environment variables ovpn_username & ovpn_password which must be defined before installation
 1. TLS is enabled by default on the REST interface - currently using the self signed openvpn certificate
 1. The Zookeeper znode dcos-vpn has ACLs enabled using the secrets and protects server and client credentials
 1. Synchronisation of assets between the container and Zookeeper in case the container is restarted
 1. Clients revoked through the REST interface are correctly revoked from OpenVPN
 1. Merged the previously separate openvpn server & openvpn-admin packages into one. The openvpn-admin package is no longer required.
 
-Task Installation
+DC/OS Public Universe Installation
 --------------
 
-The simplest method of installation is simply to add it as a new Marathon task:
+1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
+1. Select Install Package > Advanced Installation and scroll down
+1. Configure both the ovpn_username & ovpn_password, which are required for the REST interface auth and for the Zookeeper ACL credentials
+1. Select Review and Install > Install
+1. The service is installed and runs through its configuration. When complete, it'll be marked as Running and Healthy
+1. See Troubleshooting for any issues, otherwise go to Usage
 
-1. You must add the secrets to DC/OS; ovpn_username & ovpn_password. Without these, the task will not launch
-1. Clone this repo to your machine
-1. Using the DC/OS cli add the task `dcos marathon app add marathon.json`
-1. From the DC/OS UI > Services > openvpn
-1. Check it's running, if failed, goto the most recent failed task > Logs > Stderr
-1. From Services > openvpn > latest running task > Details
-1. The first endpoint address is the REST interface, the second is the OpenVPN endpoint
-1. Launch the first endpoint address and append /test to the end of the URL
-1. Authenticate using the username and password added to secrets, now move onto managing users
+Marathon Installation
+--------------
 
-Local Universe Installation
+1. Clone this repository locally and amend marathon.json to configure the ovpn_username & ovpn_password environment variables
+1. Add the task to Marathon using the DC/OS CLI `dcos marathon app add marathon.json`
+1. The service is installed and runs through its configuration. When complete, it'll be marked as Running and Healthy
+1. See Troubleshooting for any issues, otherwise go to Usage
+
+Local Universe Installation For Development
 --------------
 
 The task can be also be added as a package to a local Universe repository
 
-https://github.com/mesosphere/universe
-https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
+1. Clone https://github.com/mesosphere/universe
+1. Read https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
+1. Use the supplied simple helper script called local_universe_setup.sh to facilitate building and publishing
 
-A simple helper script called local_universe_setup.sh is available for testing
-
-This requires a Docker registry to be available to publish the image to and for DC/OS to be able to access it.
-
-Managing Users
+Usage
 --------------
 
-### Add User
-1. Authenticate and POST to the REST endpoint (found under the UI > services > openvpn > task > details). The new user's credentials will be output to the POST body. Add these to a suitable OpenVPN client and note to amend the target IP to that of the OpenVPN endpoint.
-1. The new assets will be copied to Zookeeper for persistence in case the task is killed, and will be copied back to the container on startup.
-```
-curl -k -u admin:password -X POST -d "name=richard" https://<REST endpoint ip:port>/client
-```
+### Endpoints
 
-### Revoke User
-1. Calls easyrsa revokeclient to correctly revoke the client, removes all assets locally and from Zookeeper
+The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN > <running task> > Details**
+
+1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
+1. The REST management interface is available on 5000/TCP and will be accessed at https://<IP>:5000
+1. /status /test /client are all valid REST endpoints. /status does not require authentication as it is used for health checks
+
+### Add a User
+
+1. Authenticate and POST to the REST endpoint, the new user's credentials will be output to the POST body
 ```
-curl -k -u admin:password -X DELETE https://<REST endpoint ip:port>/client/richard
+curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
 ```
+2. Copy the entire ouput and save to a single file called dcos.ovpn and add to a suitable OpenVPN client
+3. You may need to review and amend the target server IP in the credentials
+4. Test connecting with the OpenVPN client. For troubleshooting, OpenVPN clients offer useful output for debugging
+5. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be copied back as required
+
+### Revoke a User
+
+1. Using the same client endpoint, append the name of the user you wish to revoke
+```
+curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
+```
+2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
+
+### Remove persistent data
+
+Recursively delete the dcos-vpn znode, authenticating using the same ovpn_username and ovpn_password credentials configured on install
+
+zk-shell and zkCLI can both be used.  TODO: Examples.
+
 
 How it works
 --------------
@@ -90,7 +111,7 @@ A modified version of easyrsa is shipped which removes user prompts.
 Troubleshooting
 --------------
 
-1. Review stdout and stderr from the task's logs under the DC/OS UI > Service > openvpn > running task > logs
+1. Review stdout and stderr from the task's logs under the DC/OS Dashboard > Service > openvpn > running task > logs
 2. If the task is running on DC/OS, get a shell on the running container to investigate further:
 ```
 docker ps
@@ -117,8 +138,11 @@ function run_server {
 
 Todo
 --------------
+1. Get defined host ports working in the marathon.json - works in the Universe marathon template
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
+1. Examples for removing the znode
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
 1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets
 1. Either extend zk-shell to add auth to its params or replace with Kazoo code
+1. Replace the location function which calls out to ifconfig.me as it's of no use for internal networks

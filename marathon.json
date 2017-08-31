@@ -8,6 +8,7 @@
       "portMappings": [
         {
           "containerPort": 5000,
+          "hostport": 5000,
           "protocol": "tcp",
           "name": "openvpn-admin"
         },
@@ -16,12 +17,6 @@
           "hostport": 1194,
           "protocol": "udp",
           "name": "openvpnudp"
-        },
-        {
-          "containerPort": 1194,
-          "hostport": 1194,
-          "protocol": "tcp",
-          "name": "openvpntcp"
         }
       ],
       "network": "BRIDGE",
@@ -44,21 +39,9 @@
   ],
   "cpus": 0.1,
   "mem": 128,
-  "secrets": {
-    "secret0": {
-      "source": "ovpn_username"
-    },
-    "secret1": {
-      "source": "ovpn_password"
-    }
-  },
   "requirePorts": false,
   "env": {
-    "OVPN_USERNAME": {
-      "secret": "secret0"
-    },
-    "OVPN_PASSWORD": {
-      "secret": "secret1"
-    }
+    "OVPN_USERNAME": "admin",
+    "OVPN_PASSWORD": ""
   }
 }
