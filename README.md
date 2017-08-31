@@ -3,7 +3,7 @@ DC/OS OpenVPN
 
 OpenVPN server and REST management interface package for DC/OS
 
-Please note: This is a DC/OS Community package, which is not supported by Mesosphere Customer support.
+Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not supported by Mesosphere Customer support.
 
 All issues and PRs should be raised on this repository.
 
@@ -58,7 +58,6 @@ The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN
 1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
 1. The REST management interface is available on 5000/TCP and will be accessed at https://<IP>:5000
 1. /status /test /client are all valid REST endpoints. /status does not require authentication as it is used for health checks
-
 
 ### Add a User
 
