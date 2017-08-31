@@ -56,7 +56,7 @@ Usage
 The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN > <running task> > Details
 
 1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
-1. The REST management interface is available on 5000/TCP and will be accessed at HTTPS://<IP>:5000
+1. The REST management interface is available on 5000/TCP and will be accessed at https://<IP>:5000
 1. /status /test /client are all valid REST endpoints. /status does not require authentication as it is used for health checks
 
 
@@ -64,7 +64,7 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 
 1. Authenticate and POST to the REST endpoint, the new user's credentials will be output to the POST body
 
-`curl -k -u username:password -X POST -d "name=richard" https://192.168.33.12:31074/client`
+    curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client`
 
 2. Copy the entire ouput and save to a single file called dcos.ovpn and add to a suitable OpenVPN client
 3. You may need to review and amend the target server IP in the credentials
@@ -75,7 +75,7 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 
 1. Using the same client endpoint, append the name of the user you wish to revoke
 
-`curl -k -u admin:password -X DELETE https://192.168.33.12:19129/client/richard`
+    curl -k -u username:password -X DELETE https://<IP>:5000/client/richard`
 
 2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
 
@@ -138,3 +138,4 @@ Todo
 1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets
 1. Either extend zk-shell to add auth to its params or replace with Kazoo code
+1. Replace the location function which calls out to ifconfig.me as it's of no use for internal networks
