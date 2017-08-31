@@ -24,7 +24,7 @@ Features
 DC/OS Public Universe Installation
 --------------
 
-1. From the DC/OS Dashboard > Universe > Packages > enter *openvpn* in the search box
+1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
 1. Select Install Package > Advanced Installation and scroll down
 1. Configure both the ovpn_username & ovpn_password, which are required for the REST interface auth and for the Zookeeper ACL credentials
 1. Select Review and Install > Install
@@ -53,7 +53,7 @@ Usage
 
 ### Endpoints
 
-The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN > <running task> > Details
+The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN > <running task> > Details**
 
 1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
 1. The REST management interface is available on 5000/TCP and will be accessed at https://<IP>:5000
@@ -63,9 +63,9 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 ### Add a User
 
 1. Authenticate and POST to the REST endpoint, the new user's credentials will be output to the POST body
-
-    curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
-
+```
+curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
+```
 2. Copy the entire ouput and save to a single file called dcos.ovpn and add to a suitable OpenVPN client
 3. You may need to review and amend the target server IP in the credentials
 4. Test connecting with the OpenVPN client. For troubleshooting, OpenVPN clients offer useful output for debugging
@@ -74,9 +74,9 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 ### Revoke a User
 
 1. Using the same client endpoint, append the name of the user you wish to revoke
-
-    curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
-
+```
+curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
+```
 2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
 
 
