@@ -81,7 +81,7 @@ curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 
 ### Remove persistent data
 
-Recursively delete the dcos-vpn znode, autnenticating using the same ovpn_username and ovpn_password credentials configured on install
+Recursively delete the dcos-vpn znode, authenticating using the same ovpn_username and ovpn_password credentials configured on install
 
 zk-shell and zkCLI can both be used.  TODO: Examples.
 
