@@ -64,7 +64,7 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 
 1. Authenticate and POST to the REST endpoint, the new user's credentials will be output to the POST body
 
-    curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client`
+    curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
 
 2. Copy the entire ouput and save to a single file called dcos.ovpn and add to a suitable OpenVPN client
 3. You may need to review and amend the target server IP in the credentials
@@ -75,7 +75,7 @@ The exact endpoints can be confirmed from DC/OS Dashboard > Services > OpenVPN >
 
 1. Using the same client endpoint, append the name of the user you wish to revoke
 
-    curl -k -u username:password -X DELETE https://<IP>:5000/client/richard`
+    curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 
 2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
 
