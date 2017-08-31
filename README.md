@@ -139,6 +139,7 @@ function run_server {
 
 Todo
 --------------
+1. Get defined host ports working in the marathon.json - works in the Universe marathon template
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
 1. Examples for removing the znode
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
