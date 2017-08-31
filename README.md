@@ -34,7 +34,7 @@ DC/OS Public Universe Installation
 Marathon Installation
 --------------
 
-1. Clone this repository locally
+1. Clone this repository locally and amend marathon.json to configure the ovpn_username & ovpn_password environment variables
 1. Add the task to Marathon using the DC/OS CLI `dcos marathon app add marathon.json`
 1. The service is installed and runs through its configuration. When complete, it'll be marked as Running and Healthy
 1. See Troubleshooting for any issues, otherwise go to Usage
