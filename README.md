@@ -79,6 +79,12 @@ curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 ```
 2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
 
+### Remove persistent data
+
+Recursively delete the dcos-vpn znode, autnenticating using the same ovpn_username and ovpn_password credentials configured on install
+
+zk-shell and zkCLI can both be used.  TODO: Examples.
+
 
 How it works
 --------------
@@ -134,6 +140,7 @@ function run_server {
 Todo
 --------------
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
+1. Examples for removing the znode
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
 1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets
