@@ -111,7 +111,7 @@ Troubleshooting
 
 ### Service
 
-1. Review stdout and stderr from the task's logs under the **DC/OS Dashboard > Service > openvpn > running task > logs** v
+1. Review stdout and stderr from the task's logs under the **DC/OS Dashboard > Service > openvpn > running task > logs**
 2. If the task is running on DC/OS, find out which agent is running the service using the DC/OS cli `dcos task | grep openvpn`
 4. SSH to that agent and get a shell on the running container
 ```
