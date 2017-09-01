@@ -3,7 +3,7 @@ DC/OS OpenVPN
 
 OpenVPN server and REST management interface package for DC/OS
 
-Please note: This is a [DC/OS Community package](https://dcos.io/community/) package, which is not formally tested or supported by Mesosphere
+Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere
 
 Issues and PRs are welcome
 
