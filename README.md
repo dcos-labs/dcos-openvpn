@@ -3,9 +3,9 @@ DC/OS OpenVPN
 
 OpenVPN server and REST management interface package for DC/OS
 
-Please note: This is a DC/OS Community package, which is not supported by Mesosphere Customer support.
+Please note: This is a DC/OS Community package, which is not formally tested or supported by Mesosphere
 
-All issues and PRs should be raised on this repository.
+Issues and PRs are welcome
 
 Features
 --------------
@@ -13,22 +13,22 @@ Features
 1. Inherits OpenVPN in Docker from https://hub.docker.com/r/kylemanna/openvpn
 1. Automatically configures PKI, certificates and runs OpenVPN without user interaction
 1. Provides a REST interface for adding, revoking users and accessing their credentials for use with a suitable client
-1. Exposes endpoints for OpenVPN - 1194/TCP & UDP, 5000/TCP REST
+1. Exposes endpoints for OpenVPN - 1194/UDP, REST interface - 5000/TCP
 1. The REST interface uses Flask-BasicAuth and defined environment variables ovpn_username & ovpn_password which must be defined before installation
-1. TLS is enabled by default on the REST interface - currently using the self signed openvpn certificate
-1. The Zookeeper znode dcos-vpn has ACLs enabled using the secrets and protects server and client credentials
+1. TLS is enabled by default on the REST interface - currently using the self signed OpenVPN certificate
+1. The Zookeeper znode dcos-vpn has ACLs enabled, to protect the OpenVPN server and client credentials
 1. Synchronisation of assets between the container and Zookeeper in case the container is restarted
 1. Clients revoked through the REST interface are correctly revoked from OpenVPN
-1. Merged the previously separate openvpn server & openvpn-admin packages into one. The openvpn-admin package is no longer required.
+1. Merged the previously separate openvpn server & openvpn-admin 0.0.0-0.1 packages into one. The openvpn-admin package is no longer required.
 
 DC/OS Public Universe Installation
 --------------
 
 1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
-1. Select Install Package > Advanced Installation and scroll down
+1. Select **Install Package > Advanced Installation** and scroll down
 1. Configure both the ovpn_username & ovpn_password, which are required for the REST interface auth and for the Zookeeper ACL credentials
-1. Select Review and Install > Install
-1. The service is installed and runs through its configuration. When complete, it'll be marked as Running and Healthy
+1. Select **Review and Install > Install**
+1. The service is installed and initialises, when complete, it'll be marked as Running and Healthy
 1. See Troubleshooting for any issues, otherwise go to Usage
 
 Marathon Installation
@@ -36,8 +36,6 @@ Marathon Installation
 
 1. Clone this repository locally and amend marathon.json to configure the ovpn_username & ovpn_password environment variables
 1. Add the task to Marathon using the DC/OS CLI `dcos marathon app add marathon.json`
-1. The service is installed and runs through its configuration. When complete, it'll be marked as Running and Healthy
-1. See Troubleshooting for any issues, otherwise go to Usage
 
 Local Universe Installation For Development
 --------------
@@ -46,7 +44,7 @@ The task can be also be added as a package to a local Universe repository
 
 1. Clone https://github.com/mesosphere/universe
 1. Read https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
-1. Use the supplied simple helper script called local_universe_setup.sh to facilitate building and publishing
+1. Read and amend the source of local_universe_setup.sh to facilitate building and publishing
 
 Usage
 --------------
@@ -66,9 +64,9 @@ The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN
 ```
 curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
 ```
-2. Copy the entire ouput and save to a single file called dcos.ovpn and add to a suitable OpenVPN client
-3. You may need to review and amend the target server IP in the credentials
-4. Test connecting with the OpenVPN client. For troubleshooting, OpenVPN clients offer useful output for debugging
+2. Copy the entire ouput and save to a single file - you may need to amend the target server IP if on an internal network
+3. Save the file as dcos.ovpn and add to any suitable OpenVPN client, like (Tunnelblick)[https://tunnelblick.net/] for macOS for example
+4. Test connecting with the OpenVPN client. See Troubleshooting for help.
 5. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be copied back as required
 
 ### Revoke a User
@@ -105,27 +103,29 @@ A modified version of easyrsa is shipped which removes user prompts.
 
 ### Startup order
 1. run.sh checks for existing assets in Zookeeper and copies them to the container if they exist, otherwise initpki and genconfig are run
-1. Launchs the OpenVPN daemon in daemon mode, passing --daemon
+1. Launchs the OpenVPN daemon in daemon mode
 1. Starts the Python REST interface
 
 
 Troubleshooting
 --------------
 
-1. Review stdout and stderr from the task's logs under the DC/OS Dashboard > Service > openvpn > running task > logs
-2. If the task is running on DC/OS, get a shell on the running container to investigate further:
+### Service
+
+1. Review stdout and stderr from the task's logs under the **DC/OS Dashboard > Service > openvpn > running task > logs** v
+2. If the task is running on DC/OS, find out which agent is running the service using the DC/OS cli `dcos task | grep openvpn`
+4. SSH to that agent and get a shell on the running container
 ```
 docker ps
 docker exec -it <Container ID> /bin/bash
 ```
-/dcos/bin/runs.sh & /dcos/dcos_openvpn/web.py are the two main files to investigate.
+5. /dcos is the working directory, `ps` should show both the openvpn daemon and the REST interface running
+6. /dcos/bin/run.sh has a number of useful functions for resetting and reconfiguring the container, review the source
+7. If you kill openvpn process, relaunch it manually and pass --log-append /var/log/openvpn.log you can then review connectivity issues
 
-The container can also be launched local onto a Docker daemon.
+### Local development
 
-`run.sh reset` & `run.sh reset_container` are useful for testing, resetting both the Zookeeper znode & container and just the container respectively.
-
-Modifying run.sh run_server as follows it useful for testing changes to the REST interface
-
+If you wish to debug further, building the Docker image from the Dockerfile and amending `bin/run.sh` as follows allows you disable services for testing
 ```
 function run_server {
   source /dcos/bin/envs.sh
@@ -141,7 +141,7 @@ Todo
 --------------
 1. Get defined host ports working in the marathon.json - works in the Universe marathon template
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
-1. Examples for removing the znode
+1. Examples for removing the full znode
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
 1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets
