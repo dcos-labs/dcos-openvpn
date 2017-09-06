@@ -27,7 +27,7 @@ Installation
 **You must configure the OVPN_USERNAME & OVPN_PASSWORD environment variables before installation** These are required for both the REST interface
 credentials and for the Zookeeper znode ACL.
 
-###DC/OS Public Universe Installation
+### DC/OS Public Universe Installation
 
 1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
 1. Select **Install Package > Advanced Installation** and scroll down
@@ -36,12 +36,12 @@ credentials and for the Zookeeper znode ACL.
 1. The service is installed and initialises, when complete, it'll be marked as Running and Healthy
 1. See Troubleshooting for any issues, otherwise go to Usage
 
-###Marathon Installation
+### Marathon Installation
 
 1. Clone this repository locally and amend marathon.json to configure the ovpn_username & ovpn_password environment variables
 1. Add the task to Marathon using the DC/OS CLI `dcos marathon app add marathon.json`
 
-###Local Universe Installation For Development
+### Local Universe Installation For Development
 
 The task can be also be added as a package to a local Universe repository
 
