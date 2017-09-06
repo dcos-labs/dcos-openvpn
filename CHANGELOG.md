@@ -5,7 +5,7 @@ Changelog
 
 - Added Flask-BasicAuth for the REST interface
 - Enabled TLS in Flask and linked to the openvpn SSL assets
-- Configured an ACL on the /dcos-vpn Zookeeper znode to protect assets
+- Configured an ACL on the /openvpn Zookeeper znode to protect assets
 - Added full synchronisation and cleanup of assets to and from Zookeeper
 - Added correct revocation of clients
 - Merged openvpn and openvpn-admin functionality, openvpvn-admin is now deprecated
