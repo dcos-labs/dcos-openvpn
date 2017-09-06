@@ -124,7 +124,7 @@ function run_server {
 }
 
 function reset {
-  run_command "rmr /dcos-vpn/" > /dev/null 2>&1
+  run_command "rmr $ZKPATH/" > /dev/null 2>&1
   reset_container
 }
 
