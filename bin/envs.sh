@@ -1,6 +1,6 @@
 export CA_PASS=${CA_PASS:="nopass"}
 export CA_CN=${CA_CN:="openvpn.dcos"}
-export ZKPATH=${ZKPATH:="/dcos-vpn"}
+export ZKPATH=${ZKPATH:="/openvpn"}
 export ZKCLI=${ZKCLI:="zk-shell"}
 export ZKURL=${ZKURL:="master.mesos:2181"}
 export CONFIG_LOCATION=${CONFIG_LOCATION:="/etc/openvpn"}
