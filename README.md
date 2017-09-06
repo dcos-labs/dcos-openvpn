@@ -16,29 +16,32 @@ Features
 1. Exposes endpoints for OpenVPN - 1194/UDP, REST interface - 5000/TCP
 1. The REST interface uses Flask-BasicAuth and defined environment variables ovpn_username & ovpn_password which must be defined before installation
 1. TLS is enabled by default on the REST interface - currently using the self signed OpenVPN certificate
-1. The Zookeeper znode dcos-vpn has ACLs enabled, to protect the OpenVPN server and client credentials
+1. The Zookeeper znode `/openvpn` has ACLs enabled, to protect the OpenVPN server and client credentials
 1. Synchronisation of assets between the container and Zookeeper in case the container is restarted
 1. Clients revoked through the REST interface are correctly revoked from OpenVPN
 1. Merged the previously separate openvpn server & openvpn-admin 0.0.0-0.1 packages into one. The openvpn-admin package is no longer required.
 
-DC/OS Public Universe Installation
+Installation
 --------------
+
+**You must configure the OVPN_USERNAME & OVPN_PASSWORD environment variables before installation** These are required for both the REST interface
+credentials and for the Zookeeper znode ACL.
+
+###DC/OS Public Universe Installation
 
 1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
 1. Select **Install Package > Advanced Installation** and scroll down
-1. Configure both the ovpn_username & ovpn_password, which are required for the REST interface auth and for the Zookeeper ACL credentials
+1. Configure both the OVPN_USERNAME & OVPN_PASSWORD
 1. Select **Review and Install > Install**
 1. The service is installed and initialises, when complete, it'll be marked as Running and Healthy
 1. See Troubleshooting for any issues, otherwise go to Usage
 
-Marathon Installation
---------------
+###Marathon Installation
 
 1. Clone this repository locally and amend marathon.json to configure the ovpn_username & ovpn_password environment variables
 1. Add the task to Marathon using the DC/OS CLI `dcos marathon app add marathon.json`
 
-Local Universe Installation For Development
---------------
+###Local Universe Installation For Development
 
 The task can be also be added as a package to a local Universe repository
 
@@ -76,12 +79,35 @@ curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 ```
 2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
 
-### Remove persistent data
+### Remove Zookeeper data
 
-Recursively delete the dcos-vpn znode, authenticating using the same ovpn_username and ovpn_password credentials configured on install
+During installation, an ACL is set on the Zookeeper openvpn znode, restricting access based on the OVPN_USERNAME & OVPN_PASSWWORD credentials.
+In order to remove the znode data you must either authenticate with those same credentials or as the Zookeeper super user.
 
-zk-shell and zkCLI can both be used.  TODO: Examples.
+Some examples of how to achieve this using zk-shell which is shipped in the Docker image:
+```
+zk-shell connect master.mesos:2181
+(CONNECTED) / add_auth digest <username>:<password>
+(CONNECTED) / rmr openvpn/
+(CONNECTED) / exit
+```
 
+If you intend to change the OVPN_USERNAME & OVPN_PASSWORD, you will need to change the ACL on the existing znode, then reinstall the package
+with new credentials
+```
+zk-shell connect master.mesos:2181
+(CONNECTED) / add_auth digest <username>:<password>
+(CONNECTED) / set_acl /openvpn world:anyone:cdrwa
+(CONNECTED) / exit
+```
+
+If you wish to remove the znode entirely, you will need to authenticate with the Zookeeper super user credentials
+```
+zk-shell connect master.mesos:2181
+(CONNECTED) / add_auth digest <super>:<password>
+(CONNECTED) / rmr /openvpn
+(CONNECTED) / exit
+```
 
 How it works
 --------------
@@ -136,11 +162,15 @@ function run_server {
 }
 ```
 
+### Zookeeper znode removal
+
+(Zookeeper Super User credentials)[https://docs.mesosphere.com/1.8/administration/installing/custom/configuration-parameters/#zk_super_credentials] must be configured on deployment of
+DC/OS to allow you to delete the root openvpn znode. Setting ZK credentials is recommended as part of (DC/OS hardening)[https://docs.mesosphere.com/1.9/security/hardening/].
+
 Todo
 --------------
 1. Get defined host ports working in the marathon.json - works in the Universe marathon template
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
-1. Examples for removing the full znode
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
 1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets

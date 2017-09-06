@@ -7,14 +7,14 @@
     "docker": {
       "portMappings": [
         {
-          "containerPort": 5000,
           "hostport": 5000,
+          "containerPort": 5000,
           "protocol": "tcp",
           "name": "openvpn-admin"
         },
         {
-          "containerPort": 1194,
           "hostport": 1194,
+          "containerPort": 1194,
           "protocol": "udp",
           "name": "openvpnudp"
         }
@@ -42,6 +42,6 @@
   "requirePorts": false,
   "env": {
     "OVPN_USERNAME": "admin",
-    "OVPN_PASSWORD": ""
+    "OVPN_PASSWORD": "password"
   }
 }
