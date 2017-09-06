@@ -72,7 +72,7 @@ The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN
 curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
 ```
 2. Copy the entire ouput and save to a single file - you may need to amend the target server IP if on an internal network
-3. Save the file as dcos.ovpn and add to any suitable OpenVPN client, like (Tunnelblick)[https://tunnelblick.net/] for macOS for example
+3. Save the file as dcos.ovpn and add to any suitable OpenVPN client, like [Tunnelblick](https://tunnelblick.net/) for macOS for example
 4. Test connecting with the OpenVPN client. See Troubleshooting for help.
 5. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be copied back as required
 
@@ -170,8 +170,8 @@ function run_server {
 
 ### Zookeeper znode removal
 
-(Zookeeper Super User credentials)[https://docs.mesosphere.com/1.8/administration/installing/custom/configuration-parameters/#zk_super_credentials] must be configured on deployment of
-DC/OS to allow you to delete the root openvpn znode. Setting ZK credentials is recommended as part of (DC/OS hardening)[https://docs.mesosphere.com/1.9/security/hardening/].
+[Zookeeper Super User credentials](https://docs.mesosphere.com/1.8/administration/installing/custom/configuration-parameters/#zk_super_credentials) must be configured on deployment of
+DC/OS to allow you to delete the root openvpn znode. Setting ZK credentials is recommended as part of [DC/OS hardening](https://docs.mesosphere.com/1.9/security/hardening/).
 
 
 Todo
