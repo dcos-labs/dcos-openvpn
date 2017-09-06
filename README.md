@@ -1,11 +1,13 @@
 DC/OS OpenVPN
 ===============
 
-OpenVPN server and REST management interface package for DC/OS
+[![release](http://github-release-version.herokuapp.com/github/dcos-labs/dcos-openvpn/release.svg?style=flat)](https://github.com/dcos-labs/dcos-openvpn/releases/latest)
 
-Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere
+OpenVPN server and REST management interface package for DC/OS.
 
-Issues and PRs are welcome
+Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
+
+Issues and PRs are welcome.
 
 Features
 --------------
