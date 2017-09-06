@@ -9,6 +9,7 @@ Please note: This is a [DC/OS Community package](https://dcos.io/community/), wh
 
 Issues and PRs are welcome.
 
+
 Features
 --------------
 
@@ -22,6 +23,7 @@ Features
 1. Synchronisation of assets between the container and Zookeeper in case the container is restarted
 1. Clients revoked through the REST interface are correctly revoked from OpenVPN
 1. Merged the previously separate openvpn server & openvpn-admin 0.0.0-0.1 packages into one. The openvpn-admin package is no longer required.
+
 
 Installation
 --------------
@@ -50,6 +52,7 @@ The task can be also be added as a package to a local Universe repository
 1. Clone https://github.com/mesosphere/universe
 1. Read https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
 1. Read and amend the source of local_universe_setup.sh to facilitate building and publishing
+
 
 Usage
 --------------
@@ -111,6 +114,7 @@ zk-shell connect master.mesos:2181
 (CONNECTED) / exit
 ```
 
+
 How it works
 --------------
 
@@ -168,6 +172,7 @@ function run_server {
 
 (Zookeeper Super User credentials)[https://docs.mesosphere.com/1.8/administration/installing/custom/configuration-parameters/#zk_super_credentials] must be configured on deployment of
 DC/OS to allow you to delete the root openvpn znode. Setting ZK credentials is recommended as part of (DC/OS hardening)[https://docs.mesosphere.com/1.9/security/hardening/].
+
 
 Todo
 --------------
