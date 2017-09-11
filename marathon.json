@@ -20,7 +20,7 @@
         }
       ],
       "network": "BRIDGE",
-      "image": "aggress/dcos-openvpn:0.0.0-0.2",
+      "image": "aggress/dcos-openvpn:dev",
       "forcePullImage": true,
       "privileged": true
     }

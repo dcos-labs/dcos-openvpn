@@ -45,7 +45,7 @@ function download_files {
     if [ "$sub_path" == "Failed" ]; then
       err "Unable to get data from $ZKURL$ZKPATH. Check your zookeeper."
     fi
-    
+
     local fs_path=$CONFIG_LOCATION/$sub_path
     run_command "cp $fname file://$fs_path" > /dev/null 2>&1
     # Directories are copied as empty files, remove them so that the
@@ -81,7 +81,7 @@ function set_public_location {
   else
     run_command "create $loc ''"
     set_public_location
-  fi  
+  fi
 }
 
 ##############################
@@ -98,7 +98,7 @@ function setup {
 
   # Fix a bug in zk-shell copy that's pending a pull request
   sed -i 's/return PathValue("".os.path.join(fph.readlines()))/return PathValue("".join(os.path.join(fph.readlines())))/g' /usr/lib/python2.7/site-packages/zk_shell-1.1.3-py2.7.egg/zk_shell/copy.py
-  
+
   # Replace the shipped easyrsa with our easyrsa to remove the revoke confirmation
   sed -i 's/easyrsa/\/dcos\/bin\/easyrsa/g' /usr/local/bin/ovpn_revokeclient
 
@@ -112,14 +112,14 @@ function setup {
     build_configuration
     upload_files
     set_public_location
-  fi 
+  fi
 }
 
 function run_server {
   source /dcos/bin/envs.sh
   check_status
   setup
-  ovpn_run --daemon
+  #ovpn_run --daemon
   /usr/bin/python -m dcos_openvpn.main
 }
 
