@@ -27,7 +27,7 @@
   },
    "healthChecks": [
     {
-      "gracePeriodSeconds": 120,
+      "gracePeriodSeconds": 300,
       "intervalSeconds": 30,
       "timeoutSeconds": 5,
       "maxConsecutiveFailures": 3,

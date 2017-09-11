@@ -119,7 +119,7 @@ function run_server {
   source /dcos/bin/envs.sh
   check_status
   setup
-  #ovpn_run --daemon
+  ovpn_run --daemon
   /usr/bin/python -m dcos_openvpn.main
 }
 
