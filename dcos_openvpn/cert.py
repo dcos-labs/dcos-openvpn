@@ -22,7 +22,7 @@ def generate(name):
 
 
 def upload(name):
-    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /dcos-vpn/pki true true"'.format(name), shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /openvpn/pki true true"'.format(name), shell=True)
 
 
 def output(name):
@@ -33,9 +33,9 @@ def output(name):
 
 def remove(name):
     subprocess.check_call("ovpn_revokeclient {0} remove ".format(name), shell=True)
-    subprocess.check_call('/dcos/bin/zkshrun.sh "rmr /dcos-vpn/pki"'.format(name), shell=True)
-    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /dcos-vpn/pki true true"'.format(name), shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "rmr /openvpn/pki"'.format(name), shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /openvpn/pki true true"'.format(name), shell=True)
 
 
 def test():
-    subprocess.check_call('/dcos/bin/zkshrun.sh "find dcos-vpn"', shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "find openvpn"', shell=True)

@@ -1,7 +1,13 @@
 Changelog
 ===============
 
-0.0.0-0.2 - Released 31st August 2017
+0.0.0-1.0 - 12th September 2017
+
+- Changed znode path from dcos-vpn to openvpn
+- Updated notes on znode ACL management
+- Bumped the version number which should have happened in the last release to reflect the change in functionality.  This is still a preview release
+
+0.0.0-0.2 - 31st August 2017
 
 - Added Flask-BasicAuth for the REST interface
 - Enabled TLS in Flask and linked to the openvpn SSL assets
