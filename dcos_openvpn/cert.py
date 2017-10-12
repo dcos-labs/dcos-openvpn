@@ -7,6 +7,7 @@ import subprocess
 
 OVPN_USERNAME = os.environ.get('OVPN_USERNAME')
 OVPN_PASSWORD = os.environ.get('OVPN_PASSWORD')
+OVPN_PORT = os.environ.get('OVPN_PORT')
 CA_PASS = "nopass"
 
 

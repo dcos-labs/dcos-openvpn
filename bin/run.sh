@@ -111,6 +111,8 @@ function setup {
     reset
     build_configuration
     upload_files
+    # Adding a marker so we know when all the files have been uploaded 
+    run_command "create $ZKPATH/complete ''"
     set_public_location
   fi 
 }
