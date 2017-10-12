@@ -6,3 +6,4 @@ export ZKURL=${ZKURL:="master.mesos:2181"}
 export CONFIG_LOCATION=${CONFIG_LOCATION:="/etc/openvpn"}
 export HOST=${HOST:=127.0.0.1}
 export PORT0=${PORT0:=6000}
+export OVPN_PORT=${OVPN_PORT:=1194}
