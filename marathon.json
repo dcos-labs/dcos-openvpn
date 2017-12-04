@@ -1,5 +1,5 @@
 {
-  "id": "openvpn2",
+  "id": "openvpn",
   "instances": 1,
   "portDefinitions": [],
   "acceptedResourceRoles":[

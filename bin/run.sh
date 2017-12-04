@@ -48,7 +48,10 @@ function download_files {
       fi
     
       local fs_path=$CONFIG_LOCATION/$sub_path
-      run_command "cp $fname file://$fs_path true true false true"
+      run_command "cp $fname file://$fs_path false true false true"
+      # Directories are copied as empty files, remove them so that the
+      # subsequent copies actually work.
+      [ -s $fs_path ] || rm $fs_path
     done
   else
     echo "Upload marker found, leaving until next cron run"
