@@ -113,13 +113,16 @@ function get_location {
 function set_public_location {
   local loc=$ZKPATH/location.conf
   source $OPENVPN/ovpn_env.sh
+  public_address="remote $(wget -q -O - -U curl ipinfo.io/ip)"
   if run_command "ls $loc" ; then
-  	run_command "set $loc \"remote $(wget -O - -U curl ifconfig.me) $PORT0 $OVPN_PROTO\""
+        #run_command "set $loc \"remote $(wget -O - -U curl ifconfig.me) $PORT0 $OVPN_PROTO\""
+        run_command "set $loc \"$public_address $PORT1 $OVPN_PROTO\""
   else
     run_command "create $loc ''"
     set_public_location
-  fi  
+  fi
 }
+
 
 ##############################
 # Main setup
@@ -148,6 +151,7 @@ function setup {
     reset
     build_configuration
     upload_files
+    set_public_location
   fi 
 }
 
