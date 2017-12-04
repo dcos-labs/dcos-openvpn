@@ -35,23 +35,24 @@ function run_command {
 ##############################
 
 function download_files {
-  ZKPATH_STRIPPED=$(echo $ZKPATH | sed -e 's/^\///')
-  for fname in $(run_command "find / $ZKPATH_STRIPPED"); do
-    local sub_path=$(echo $fname | cut -d/ -f3-)
+  if [[ $(run_command "ifind /openvpn/upload_marker") = "" ]]; then
+    ZKPATH_STRIPPED=$(echo $ZKPATH | sed -e 's/^\///')
+    for fname in $(run_command "find / $ZKPATH_STRIPPED"); do
+      local sub_path=$(echo $fname | cut -d/ -f3-)
 
-    # If the sub_path is empty, there's no reason to copy
-    [[ -z $sub_path ]] && continue
+      # If the sub_path is empty, there's no reason to copy
+      [[ -z $sub_path ]] && continue
 
-    if [ "$sub_path" == "Failed" ]; then
-      err "Unable to get data from $ZKURL$ZKPATH. Check your zookeeper."
-    fi
+      if [ "$sub_path" == "Failed" ]; then
+        err "Unable to get data from $ZKURL$ZKPATH. Check your zookeeper."
+      fi
     
-    local fs_path=$CONFIG_LOCATION/$sub_path
-    run_command "cp $fname file://$fs_path" > /dev/null 2>&1
-    # Directories are copied as empty files, remove them so that the
-    # subsequent copies actually work.
-    [ -s $fs_path ] || rm $fs_path
-  done
+      local fs_path=$CONFIG_LOCATION/$sub_path
+      run_command "cp $fname file://$fs_path false true false true"
+    done
+  else
+    echo "Upload marker found, leaving until next cron run"
+  fi
 }
 
 function upload_files {
@@ -59,11 +60,44 @@ function upload_files {
   	run_command "create $ZKPATH '' false false true"
   	run_command "set_acls /$ZKPATH username_password:$OVPN_USERNAME:$OVPN_PASSWORD:cdrwa"
   fi
+
+  # Adding a marker so we know when all the files have been uploaded 
+  run_command "create $ZKPATH/upload_marker ''"
+
   for fname in $(find $CONFIG_LOCATION -not -type d); do
     local zk_location=$(echo $fname | sed 's|'$CONFIG_LOCATION'/|/|')
-    run_command "cp file://$fname $ZKPATH$zk_location"
+    run_command "cp file://$fname $ZKPATH$zk_location false true false true"
   done
+
+  # Removing upload marker 
+  run_command "rm $ZKPATH/upload_marker"
 }
+
+
+##############################
+# Synchronise
+##############################
+
+function synchronise {
+  index_on_zk="/openvpn/pki/index.txt"
+  index_on_local="/etc/openvpn/pki/index.txt"
+  index_tmp="/tmp/index.txt"
+
+  rm -f $index_tmp
+  run_command "cp $index_on_zk file://$index_tmp false true false true"
+  if [[ $(diff -q $index_on_local $index_tmp) != "" ]]; then
+    if [[ $(run_command "ifind /openvpn/upload_marker") = "" ]]; then
+      download_files
+      pkill openvpn
+      ovpn_run --daemon
+    else
+      echo "Upload marker found will attempt on next cron run"
+    fi
+  else
+    echo "index.txt matches so nothing to do"
+  fi
+}
+
 
 ##############################
 # Location set and get
@@ -111,8 +145,6 @@ function setup {
     reset
     build_configuration
     upload_files
-    # Adding a marker so we know when all the files have been uploaded 
-    run_command "create $ZKPATH/complete ''"
     set_public_location
   fi 
 }
@@ -121,6 +153,8 @@ function run_server {
   source /dcos/bin/envs.sh
   check_status
   setup
+  crond
+  echo "*/2 * * * * /dcos/bin/run.sh synchronise" >> /etc/crontabs/root
   ovpn_run --daemon
   /usr/bin/python -m dcos_openvpn.main
 }
@@ -146,5 +180,6 @@ case "$@" in
   get_location)        get_location ;;
   reset)               reset ;;
   reset_container)     reset_container ;;
+  synchronise)         synchronise ;;
   *) exit 1 ;;
 esac
