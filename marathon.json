@@ -1,7 +1,10 @@
 {
-  "id": "openvpn",
+  "id": "openvpn2",
   "instances": 1,
   "portDefinitions": [],
+  "acceptedResourceRoles":[
+      "slave_public"
+   ],
   "container": {
     "type": "DOCKER",
     "docker": {
@@ -27,7 +30,7 @@
   },
    "healthChecks": [
     {
-      "gracePeriodSeconds": 900,
+      "gracePeriodSeconds": 360,
       "intervalSeconds": 30,
       "timeoutSeconds": 5,
       "maxConsecutiveFailures": 3,

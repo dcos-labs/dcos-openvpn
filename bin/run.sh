@@ -48,7 +48,7 @@ function download_files {
       fi
     
       local fs_path=$CONFIG_LOCATION/$sub_path
-      run_command "cp $fname file://$fs_path false true false true"
+      run_command "cp $fname file://$fs_path true true false true"
     done
   else
     echo "Upload marker found, leaving until next cron run"
@@ -145,7 +145,6 @@ function setup {
     reset
     build_configuration
     upload_files
-    set_public_location
   fi 
 }
 
