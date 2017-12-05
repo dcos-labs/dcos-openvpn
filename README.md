@@ -3,7 +3,7 @@ DC/OS OpenVPN
 
 OpenVPN server and REST management interface package for DC/OS
 
-Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere
+Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
 
 Issues and PRs are welcome
 
@@ -19,7 +19,7 @@ Features
 1. The Zookeeper znode `/openvpn` has ACLs enabled, to protect the OpenVPN server and client credentials
 1. Synchronisation of assets between the container and Zookeeper in case the container is restarted
 1. Clients revoked through the REST interface are correctly revoked from OpenVPN
-1. Merged the previously separate openvpn server & openvpn-admin 0.0.0-0.1 packages into one. The openvpn-admin package is no longer required.
+1. Merged the previously separate openvpn server & openvpn-admin 0.0.0-0.1 packages into one. The openvpn-admin package is no longer required
 
 Installation
 --------------
@@ -57,19 +57,18 @@ Usage
 The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN > <running task> > Details**
 
 1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
-1. The REST management interface is available on 5000/TCP and will be accessed at https://<IP>:5000
+1. The REST management interface is available on `5000/TCP` and will be accessed at `https://<IP>:5000`
 1. /status /test /client are all valid REST endpoints. /status does not require authentication as it is used for health checks
 
 ### Add a User
 
 1. Authenticate and POST to the REST endpoint, the new user's credentials will be output to the POST body
 ```
-curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
+curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client > richard.ovpn
 ```
-2. Copy the entire ouput and save to a single file - you may need to amend the target server IP if on an internal network
-3. Save the file as dcos.ovpn and add to any suitable OpenVPN client, like (Tunnelblick)[https://tunnelblick.net/] for macOS for example
-4. Test connecting with the OpenVPN client. See Troubleshooting for help.
-5. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be copied back as required
+2. Import the .ovpn file into any suitable OpenVPN client, like (Tunnelblick)[https://tunnelblick.net/] for macOS for example
+3. Test connecting with the OpenVPN client. See Troubleshooting for help.
+4. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be synchronised with any other instances
 
 ### Revoke a User
 
@@ -77,18 +76,18 @@ curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client
 ```
 curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 ```
-2. The client is correctly revoked from OpenVPN and the assets are removed from the container and Zookeeper
+2. The client is correctly revoked from OpenVPN and the change is synchronised with all running instances
 
 ### Remove Zookeeper data
 
-During installation, an ACL is set on the Zookeeper openvpn znode, restricting access based on the OVPN_USERNAME & OVPN_PASSWWORD credentials.
+During installation, an ACL is set on the Zookeeper OpenVPN znode, restricting access based on the OVPN_USERNAME & OVPN_PASSWWORD credentials.
 In order to remove the znode data you must either authenticate with those same credentials or as the Zookeeper super user.
 
 Some examples of how to achieve this using zk-shell which is shipped in the Docker image:
 ```
 zk-shell connect master.mesos:2181
 (CONNECTED) / add_auth digest <username>:<password>
-(CONNECTED) / rmr openvpn/
+(CONNECTED) / rmr /openvpn/
 (CONNECTED) / exit
 ```
 
@@ -126,10 +125,19 @@ zkshrun.sh is a little standalone helper script that provides run_command to the
 
 A modified version of easyrsa is shipped which removes user prompts.
 
+Synchronisation between multiple running instances is handled via a cron job, which runs every 2 minutes. It checks to see
+if the `openvpn/pki/issue.txt` differs between localhost and in Zookeeper.  If there's a diff, it signifies that a user has been created
+or revoked by another instance which has been uploaded to Zookeeper. The full pki directory is copied down to update the local instance
+and the ovpn daemon is restarted.
+
+This functionality is rudimentary and it's recommended not to add or revoke more than one user at a time and then leave >3 minutes between
+each change to allow the synchronisation to work.
+
 ### Startup order
 1. run.sh checks for existing assets in Zookeeper and copies them to the container if they exist, otherwise initpki and genconfig are run
 1. Launchs the OpenVPN daemon in daemon mode
 1. Starts the Python REST interface
+1. Synchronisation cron job every 2 minutes
 
 
 Troubleshooting
