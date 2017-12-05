@@ -34,8 +34,8 @@ def output(name):
 
 def remove(name):
     subprocess.check_call("ovpn_revokeclient {0} remove ".format(name), shell=True)
-    subprocess.check_call('/dcos/bin/zkshrun.sh "rmr /openvpn/pki"'.format(name), shell=True)
-    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /openvpn/pki true true"'.format(name), shell=True)
+    subprocess.check_call('/dcos/bin/run.sh synchronise'.format(name), shell=True)
+
 
 
 def test():
