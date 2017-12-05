@@ -112,6 +112,7 @@ function get_location {
 }
 
 function set_public_location {
+  source $OPENVPN/ovpn_env.sh
   echo "remote $(wget -q -O - -U curl ipinfo.io/ip) $PORT1 $OVPN_PROTO" > /etc/openvpn/location.conf
 }
 
