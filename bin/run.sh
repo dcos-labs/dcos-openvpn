@@ -112,7 +112,7 @@ function get_location {
 }
 
 function set_public_location {
-  echo "remote $(wget -q -O - -U curl ipinfo.io/ip) $PORT0 $OVPN_PROTO" > /etc/openvpn/location.conf
+  echo "remote $(wget -q -O - -U curl ipinfo.io/ip) $PORT1 $OVPN_PROTO" > /etc/openvpn/location.conf
 }
 
 
@@ -143,8 +143,8 @@ function setup {
     reset
     build_configuration
     upload_files
-    set_public_location
   fi 
+    set_public_location
 }
 
 function run_server {
