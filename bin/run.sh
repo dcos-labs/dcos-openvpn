@@ -93,6 +93,7 @@ function synchronise {
       download_files
       pkill openvpn
       ovpn_run --daemon
+      set_public_location
     else
       echo "Upload marker found will attempt on next cron run"
     fi
