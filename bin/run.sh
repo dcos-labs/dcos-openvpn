@@ -122,6 +122,8 @@ function set_public_location {
 ##############################
 
 function build_configuration {
+  # Adding a lock to stop any other instances trying to upload at the same time
+  run_command "create $ZKPATH/upload_marker ''"
   ovpn_genconfig -u udp://$CA_CN
   rm -rf $CONFIG_LOCATION/pki
   (echo $CA_CN) | PATH=/dcos/bin:$PATH ovpn_initpki nopass
@@ -140,10 +142,17 @@ function setup {
     reset_container
     download_files
   else
-    echo "Files not found in Zookeeper - generating and uploading"
-    reset
-    build_configuration
-    upload_files
+    echo "Files not found in Zookeeper"
+    if [[ $(run_command "ifind /openvpn/upload_marker") = "" ]]; then
+      echo "Initialising OpenVPN config, pki and uploading to Zookeeper"
+      reset
+      build_configuration
+      upload_files
+    else
+      echo "Upload marker found, another instance may be initialising, sleeping for 2m then will attempt download"
+      sleep 2000
+      setup
+    fi
   fi 
     set_public_location
 }
