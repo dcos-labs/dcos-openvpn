@@ -112,6 +112,7 @@ function set_public_location {
 
 function create_zkpath {
   if [[ $(run_command "find /openvpn") = "" ]]; then
+    echo "INFO: Creating the zkpath if it doesn't already exist"
     run_command "create $ZKPATH '' false false true"
     run_command "set_acls /$ZKPATH username_password:$OVPN_USERNAME:$OVPN_PASSWORD:cdrwa"
   fi
@@ -134,12 +135,12 @@ function setup {
   # Introduce a random delay between 1-21 seconds in case of multiple instances starting at the same time
   sleep $[ ( $RANDOM % 20 )  + 1 ]s
 
+  create_zkpath
+
   if [[ $(run_command "find /openvpn/ complete") = "" ]]; then
     echo "INFO: I didn't find a marker signifying a full dataset on Zookeeper"
     if [[ $(run_command "find /openvpn/ upload_marker") = "" ]]; then
       echo "INFO: I didn't find a lock"
-      echo "INFO: Creating the zkpath if it doesn't already exist"
-      create_zkpath
       build_configuration
       echo "INFO: Uploading files to Zookeeper"
       upload_files
