@@ -1,6 +1,17 @@
 Changelog
 ===============
 
+0.0.0-2.0 - 7th December 2017
+
+- Added synchronisation of the PKI (users, certificates and keys) between multiple running instances
+- Enabled >1 instances to be started at the same time and match their local data
+- Cleaned up the output to stdout
+- Refactored a number of functions in run.sh to improve robustness
+- Increased CPU resource from 0.1 to 1.0 due to DC/OS 1.10 now enforcing CPU usage - required for key generation.
+- Fixed https://github.com/dcos-labs/dcos-openvpn/issues/13
+- Improved the function to find the public address
+- Fixed the hostports in the marathon.json
+
 0.0.0-1.0 - 12th September 2017
 
 - Changed znode path from dcos-vpn to openvpn

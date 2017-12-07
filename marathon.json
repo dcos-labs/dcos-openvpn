@@ -2,32 +2,35 @@
   "id": "openvpn",
   "instances": 1,
   "portDefinitions": [],
+  "acceptedResourceRoles":[
+      "slave_public"
+   ],
   "container": {
     "type": "DOCKER",
     "docker": {
       "portMappings": [
         {
-          "hostport": 5000,
+          "hostPort": 5000,
           "containerPort": 5000,
           "protocol": "tcp",
           "name": "openvpn-admin"
         },
         {
-          "hostport": 1194,
+          "hostPort": 1194,
           "containerPort": 1194,
           "protocol": "udp",
           "name": "openvpnudp"
         }
       ],
       "network": "BRIDGE",
-      "image": "aggress/dcos-openvpn:0.0.0-0.2",
+      "image": "aggress/dcos-openvpn:0.0.0-2.0",
       "forcePullImage": true,
       "privileged": true
     }
   },
    "healthChecks": [
     {
-      "gracePeriodSeconds": 120,
+      "gracePeriodSeconds": 360,
       "intervalSeconds": 30,
       "timeoutSeconds": 5,
       "maxConsecutiveFailures": 3,
@@ -37,7 +40,7 @@
       "ignoreHttp1xx": false
     }
   ],
-  "cpus": 0.1,
+  "cpus": 1,
   "mem": 128,
   "requirePorts": false,
   "env": {
