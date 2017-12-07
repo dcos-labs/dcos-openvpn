@@ -25,14 +25,14 @@ Installation
 --------------
 
 **You must configure the OVPN_USERNAME & OVPN_PASSWORD environment variables before installation** These are required for both the REST interface
-credentials and for the Zookeeper znode ACL.
+credentials and for the Zookeeper znode ACL. Please note, DC/OS 1.10 enforces CPU usage, key generation requires a full 1.0 CPU. This can be reduced back to 0.1 once up and running.
 
 ### DC/OS Public Universe Installation
 
-1. From the **DC/OS Dashboard > Universe > Packages > enter openvpn in the search box**
-1. Select **Install Package > Advanced Installation** and scroll down
-1. Configure both the OVPN_USERNAME & OVPN_PASSWORD
-1. Select **Review and Install > Install**
+1. From the `DC/OS Dashboard > Universe > Packages > enter openvpn in the search box`
+1. Select `Install Package > Advanced Installation` and scroll down
+1. Configure both the `OVPN_USERNAME` & `OVPN_PASSWORD`
+1. Select `Review and Install > Install`
 1. The service is installed and initialises, when complete, it'll be marked as Running and Healthy
 1. See Troubleshooting for any issues, otherwise go to Usage
 
@@ -47,16 +47,15 @@ The task can be also be added as a package to a local Universe repository
 
 1. Clone https://github.com/mesosphere/universe
 1. Read https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
-1. Read and amend the source of local_universe_setup.sh to facilitate building and publishing
 
 Usage
 --------------
 
 ### Endpoints
 
-The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN > <running task> > Details**
+The exact endpoints can be confirmed from `DC/OS Dashboard > Services > OpenVPN > <running task> > Details`
 
-1. OpenVPN is presented on 1194/UDP and any OpenVPN client will default to this port
+1. OpenVPN is presented on `1194/UDP` and any OpenVPN client will default to this port
 1. The REST management interface is available on `5000/TCP` and will be accessed at `https://<IP>:5000`
 1. /status /test /client are all valid REST endpoints. /status does not require authentication as it is used for health checks
 
@@ -66,8 +65,8 @@ The exact endpoints can be confirmed from **DC/OS Dashboard > Services > OpenVPN
 ```
 curl -k -u username:password -X POST -d "name=richard" https://<IP>:5000/client > richard.ovpn
 ```
-2. Import the .ovpn file into any suitable OpenVPN client, like (Tunnelblick)[https://tunnelblick.net/] for macOS for example
-3. Test connecting with the OpenVPN client. See Troubleshooting for help.
+2. Import the .ovpn file into any suitable OpenVPN client, Tunnelblick for macOS, for example
+3. Test connecting with the OpenVPN client. See Troubleshooting for help
 4. The new client credentials will be backed up to Zookeeper for persistence in case the task is killed, and will be synchronised with any other instances
 
 ### Revoke a User
@@ -80,7 +79,7 @@ curl -k -u username:password -X DELETE https://<IP>:5000/client/richard
 
 ### Remove Zookeeper data
 
-During installation, an ACL is set on the Zookeeper OpenVPN znode, restricting access based on the OVPN_USERNAME & OVPN_PASSWWORD credentials.
+During installation, an ACL is set on the Zookeeper OpenVPN znode, restricting access based on the `OVPN_USERNAME` & `OVPN_PASSWWORD` credentials.
 In order to remove the znode data you must either authenticate with those same credentials or as the Zookeeper super user.
 
 Some examples of how to achieve this using zk-shell which is shipped in the Docker image:
@@ -91,7 +90,7 @@ zk-shell connect master.mesos:2181
 (CONNECTED) / exit
 ```
 
-If you intend to change the OVPN_USERNAME & OVPN_PASSWORD, you will need to change the ACL on the existing znode, then reinstall the package
+If you intend to change the `OVPN_USERNAME` & `OVPN_PASSWORD`, you will need to change the ACL on the existing znode, then reinstall the package
 with new credentials
 ```
 zk-shell connect master.mesos:2181
@@ -145,7 +144,7 @@ Troubleshooting
 
 ### Service
 
-1. Review stdout and stderr from the task's logs under the **DC/OS Dashboard > Service > openvpn > running task > logs**
+1. Review stdout and stderr from the task's logs under the `DC/OS Dashboard > Service > openvpn > running task > logs`
 2. If the task is running on DC/OS, find out which agent is running the service using the DC/OS cli `dcos task | grep openvpn`
 4. SSH to that agent and get a shell on the running container
 ```
@@ -177,10 +176,8 @@ DC/OS to allow you to delete the root openvpn znode. Setting ZK credentials is r
 
 Todo
 --------------
-1. Get defined host ports working in the marathon.json - works in the Universe marathon template
 1. The patch for zk-shell https://github.com/rgs1/zk_shell/pull/82 as managed in run.bash around line 100 needs removing when zk-shell is fixed
 1. Update the /status endpoint for ovpn_status output and tie into a healthcheck
-1. run.sh usage and tidying
 1. Update for DC/OS 1.10 and file based secrets
 1. Either extend zk-shell to add auth to its params or replace with Kazoo code
 1. Replace the location function which calls out to ifconfig.me as it's of no use for internal networks

@@ -10,6 +10,7 @@ Changelog
 - Increased CPU resource from 0.1 to 1.0 due to DC/OS 1.10 now enforcing CPU usage - required for key generation.
 - Fixed https://github.com/dcos-labs/dcos-openvpn/issues/13
 - Improved the function to find the public address
+- Fixed the hostports in the marathon.json
 
 0.0.0-1.0 - 12th September 2017
 
