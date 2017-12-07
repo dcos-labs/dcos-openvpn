@@ -1,6 +1,7 @@
 DC/OS OpenVPN
 ===============
 
+[![release](http://github-release-version.herokuapp.com/github/dcos-labs/dcos-openvpn/release.svg?style=flat)](https://github.com/dcos-labs/dcos-openvpn/releases/latest)
 
 Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
 
