@@ -1,17 +1,12 @@
 DC/OS OpenVPN
 ===============
 
-[![release](http://github-release-version.herokuapp.com/github/dcos-labs/dcos-openvpn/release.svg?style=flat)](https://github.com/dcos-labs/dcos-openvpn/releases/latest)
+[![release](https://img.shields.io/badge/release-v0.0.0--2.0-brightgreen.svg?style=flat)](https://github.com/dcos-labs/dcos-openvpn/releases/latest)
 
-Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
-
-OpenVPN server and REST management interface package for DC/OS.
-
-Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
-
-Issues and PRs are welcome.
-
-Please review the Changelog for recent changes
+- Please note: This is a [DC/OS Community package](https://dcos.io/community/), which is not formally tested or supported by Mesosphere.
+- OpenVPN server and REST management interface package for DC/OS.
+- Issues and PRs are welcome.
+- Please review the [Changelog](https://github.com/dcos-labs/dcos-openvpn/blob/master/CHANGELOG.md)for recent changes
 
 
 Features
@@ -55,6 +50,12 @@ The task can be also be added as a package to a local Universe repository
 
 1. Clone https://github.com/mesosphere/universe
 1. Read https://docs.mesosphere.com/1.9/administering-clusters/deploying-a-local-dcos-universe/
+
+
+Upgrade
+--------------
+
+If upgrading from a previous version >0.0.0-0.1, all user certificates and keys will be preserved.
 
 
 Usage
