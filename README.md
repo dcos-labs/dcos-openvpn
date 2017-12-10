@@ -55,7 +55,14 @@ The task can be also be added as a package to a local Universe repository
 Upgrade
 --------------
 
-If upgrading from a previous version >0.0.0-0.1, all user certificates and keys will be preserved.
+If upgrading from a previous version >0.0.0-0.1, all user certificates and keys will be preserved. As part of the new system to handle multiple running instances, a marker is required on the existing Zookeeper dataset so it'll be copied to the container.  If running <0.0.0-2.0 you will need this pre-requisite step **before** installing.
+
+1. Find the public agent currently running an OpenVPN container `dcos task list`
+1. SSH to that container `dcos node ssh --master-proxy --private-ip <IP>`
+1. Find the Docker container ID `docker ps | grep openvpn`
+1. Get shell on the Docker container `docker exec -it <Container ID> /bin/bash`
+1. Set the marker `/dcos/bin/zkshrun.sh "create /openvpn/complete ''"`
+1. Now upgrade to the latest version of the DC/OS package through the DC/OS UI and ensure you use the same `ovpn_username` and `ovpn_password` as previously used
 
 
 Usage
