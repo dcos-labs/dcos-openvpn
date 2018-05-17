@@ -111,7 +111,7 @@ function set_public_location {
 ##############################
 
 function create_zkpath {
-  if [[ $(run_command "find /openvpn") = "" ]]; then
+  if [[ $(run_command "find /openvpn") = "Path /openvpn doesn't exist" ]]; then
     echo "INFO: Creating the zkpath if it doesn't already exist"
     run_command "create $ZKPATH '' false false true"
     run_command "set_acls /$ZKPATH username_password:$OVPN_USERNAME:$OVPN_PASSWORD:cdrwa"
