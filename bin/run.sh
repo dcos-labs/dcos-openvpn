@@ -26,7 +26,7 @@ function fix_scripts {
 ##############################
 
 function download_files {
-  if [[ $(run_command "find /openvpn/ upload_marker") = "" ]]; then
+  if [[ $(run_command "find /$ZKPATH/ upload_marker") = "" ]]; then
     ZKPATH_STRIPPED=$(echo $ZKPATH | sed -e 's/^\///')
     for fname in $(run_command "find / $ZKPATH_STRIPPED"); do
       local sub_path=$(echo $fname | cut -d/ -f3-)
@@ -76,7 +76,7 @@ function synchronise {
   rm -f $index_tmp
   run_command "cp $index_on_zk file://$index_tmp false true false true" > /dev/null 2>&1
   if [[ $(diff -q $index_on_local $index_tmp) != "" ]]; then
-    if [[ $(run_command "find /openvpn/ upload_marker") = "" ]]; then
+    if [[ $(run_command "find /$ZKPATH/ upload_marker") = "" ]]; then
       echo "INFO: Zookeeper has a new dataset, downloading and restarting OpenVPN to apply"
       download_files
       pkill openvpn
@@ -111,7 +111,8 @@ function set_public_location {
 ##############################
 
 function create_zkpath {
-  if [[ $(run_command "find /openvpn") = "" ]]; then
+  nodeExists=$(run_command "find /$ZKPATH")
+  if [[  $nodeExists = ""  || $nodeExists = "Path /$ZKPATH doesn't exist" ]]; then
     echo "INFO: Creating the zkpath if it doesn't already exist"
     run_command "create $ZKPATH '' false false true"
     run_command "set_acls /$ZKPATH username_password:$OVPN_USERNAME:$OVPN_PASSWORD:cdrwa"
@@ -137,9 +138,9 @@ function setup {
 
   create_zkpath
 
-  if [[ $(run_command "find /openvpn/ complete") = "" ]]; then
+  if [[ $(run_command "find /$ZKPATH/ complete") = "" ]]; then
     echo "INFO: I didn't find a marker signifying a full dataset on Zookeeper"
-    if [[ $(run_command "find /openvpn/ upload_marker") = "" ]]; then
+    if [[ $(run_command "find /$ZKPATH/ upload_marker") = "" ]]; then
       echo "INFO: I didn't find a lock"
       build_configuration
       echo "INFO: Uploading files to Zookeeper"
@@ -150,7 +151,7 @@ function setup {
       setup
     fi
   else
-    if [[ $(run_command "find /openvpn/ upload_marker") = "" ]]; then
+    if [[ $(run_command "find /$ZKPATH/ upload_marker") = "" ]]; then
       reset_container
       echo "INFO: Files found in Zookeeper, no lock found, downloading to container"
       download_files
