@@ -8,6 +8,7 @@ import subprocess
 OVPN_USERNAME = os.environ.get('OVPN_USERNAME')
 OVPN_PASSWORD = os.environ.get('OVPN_PASSWORD')
 OVPN_PORT = os.environ.get('OVPN_PORT')
+ZKPATH = os.environ.get('ZKPATH')
 CA_PASS = "nopass"
 
 
@@ -23,7 +24,7 @@ def generate(name):
 
 
 def upload(name):
-    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /openvpn/pki true true"'.format(name), shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "cp file:///etc/openvpn/pki /{0}/pki true true"'.format(ZKPATH), shell=True)
 
 
 def output(name):
@@ -39,4 +40,4 @@ def remove(name):
 
 
 def test():
-    subprocess.check_call('/dcos/bin/zkshrun.sh "find openvpn"', shell=True)
+    subprocess.check_call('/dcos/bin/zkshrun.sh "find {0}"'.format(ZKPATH), shell=True)
